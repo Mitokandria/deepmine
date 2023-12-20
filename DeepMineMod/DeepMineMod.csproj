@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   
   <PropertyGroup>
@@ -31,7 +31,8 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /Y /F &quot;$(TargetPath)&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Stationeers\BepInEx\plugins&quot;" />
+    <Exec Command="xcopy /Y /F &quot;$(TargetPath)&quot; &quot;C:\Users\Rodrigo\OneDrive\Documentos\My Games\Stationeers\mods\DeepMineMod [StationeersMods]&quot;" />
+	<Exec Command="D:\Games\Libraries\Steam\steamapps\common\Stationeers\rocketstation.exe" />
   </Target>
 
 </Project>

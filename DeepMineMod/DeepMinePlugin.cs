@@ -4,20 +4,25 @@ using BepInEx.Configuration;
 
 namespace DeepMineMod
 {
-    [BepInPlugin("com.dl.deepmine", "Deep Mine Mod", "0.2.2.0")]
+    [BepInPlugin("DeepMineMod", "Deep Mine Mod", "0.3.0.0")]
     public class DeepMinePlugin : BaseUnityPlugin
     {
         private ConfigEntry<float> configBedrockDepth;
-        private ConfigEntry<int> configGPRRange;
-        private ConfigEntry<int> configOreStackSize;
-        private ConfigEntry<float> configMineCompletionTime;
+        //private ConfigEntry<int> configLevelMultiplier;
+        private ConfigEntry<int> configOreMinDropQuantity;
+        private ConfigEntry<int> configOreMaxDropQuantity;
+        //private ConfigEntry<float> configMineCompletionTime;
         private ConfigEntry<float> configMineAmount;
+        private ConfigEntry<bool> configDebugMode;
 
         public static float BedrockDepth;
-        public static int GPRRange;
-        public static int OreStackSize;
-        public static float MineCompletionTime;
+        public static int LevelMultiplier = 2;
+        public static int OreMinDropQuantity;
+        public static int OreMaxDropQuantity;
+        //public static float MineCompletionTime;
         public static float MineAmount;
+        public static bool DebugMode;
+
 
         public static void ModLog(string text)
         {
@@ -40,39 +45,46 @@ namespace DeepMineMod
         {
             configBedrockDepth = Config.Bind("General",   // The section under which the option is shown
                                      "BedrockDepth",  // The key of the configuration option in the configuration file
-                                     -160f, // The default value
-                                     "The depth of the bedrock layer, vanilla is -40"); // Description of the option to show in the config file
-
+                                     -120f, // The default value
+                                     "The depth of the bedrock layer, vanilla is -40. Portable GPR range is 40% of the depth of the bedrock layer.\nThe mod divides the depth of the bedrock by 4, creating 4 layers to spread the ores in different ammounts"); // Description of the option to show in the config file
             BedrockDepth = configBedrockDepth.Value;
 
-            configGPRRange = Config.Bind("General",   // The section under which the option is shown
-                                     "GPRRange",  // The key of the configuration option in the configuration file
-                                     40, // The default value
-                                     "The range of the portable ground penetrating radar (GPR), vanilla is 20 "); // Description of the option to show in the config file
+            /*configLevelMultiplier = Config.Bind("Mining Level",   // The section under which the option is shown
+                                     "LevelMultiplier",  // The key of the configuration option in the configuration file
+                                     2, // The default value
+                                     "Multiplier to calculate how drop quantity is increased in each layer"); // Description of the option to show in the config file
+            LevelMultiplier = configLevelMultiplier.Value;*/
 
-            GPRRange = configGPRRange.Value;
+            configOreMinDropQuantity = Config.Bind("Mining Level",   // The section under which the option is shown
+                                     "OreMinDropQuantity",  // The key of the configuration option in the configuration file
+                                     1, // The default value
+                                     "Minimum drop quantity for the first layer (the first layer is the top most layer of the terrain)"); // Description of the option to show in the config file
+            OreMinDropQuantity = configOreMinDropQuantity.Value;
 
-            configOreStackSize = Config.Bind("General",   // The section under which the option is shown
-                                     "OreStackSize",  // The key of the configuration option in the configuration file
-                                     100, // The default value
-                                     "The maximum amount of ore to be stacked in the inventory, vanilla is 50"); // Description of the option to show in the config file
+            configOreMaxDropQuantity = Config.Bind("Mining Level",   // The section under which the option is shown
+                                     "OreMaxDropQuantity",  // The key of the configuration option in the configuration file
+                                     3, // The default value
+                                     "Maximum drop quantity for the first layer (the first layer is the top most layer of the terrain)"); // Description of the option to show in the config file
+            OreMaxDropQuantity = configOreMaxDropQuantity.Value;
 
-            OreStackSize = configOreStackSize.Value;
 
-
-            configMineCompletionTime = Config.Bind("Mining Tool",   // The section under which the option is shown
+            /*configMineCompletionTime = Config.Bind("Mining Tool",   // The section under which the option is shown
                                      "MineCompletionTime",  // The key of the configuration option in the configuration file
                                      0.12f, // The default value
                                      "Time to complete mining when using the tool. Smaller is faster drilling. Vanilla is 0.12"); // Description of the option to show in the config file
-
-            MineCompletionTime = configMineCompletionTime.Value;
+            MineCompletionTime = configMineCompletionTime.Value;*/
 
             configMineAmount = Config.Bind("Mining Tool",   // The section under which the option is shown 
                          "MineAmount",  // The key of the configuration option in the configuration file
-                         0.3f, // The default value
+                         0.4f, // The default value
                          "How much of the voxel to mine at a time. Larger is faster drilling. Vanilla is 0.2"); // Description of the option to show in the config file
-
             MineAmount = configMineAmount.Value;
+
+            configDebugMode = Config.Bind("Debug",   // The section under which the option is shown
+                                     "DebugMode",  // The key of the configuration option in the configuration file
+                                     false, // The default value
+                                     "Turns debug mode"); // Description of the option to show in the config file
+            DebugMode = configDebugMode.Value;
         }
 
     }
