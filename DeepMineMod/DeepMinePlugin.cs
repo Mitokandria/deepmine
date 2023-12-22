@@ -16,13 +16,14 @@ namespace DeepMineMod
         private ConfigEntry<bool> configDebugMode;
 
         public static float BedrockDepth;
-        public static int LevelMultiplier = 2;
+        public static double LevelMultiplier = 2;
         public static int OreMinDropQuantity;
         public static int OreMaxDropQuantity;
         //public static float MineCompletionTime;
         public static float MineAmount;
         public static bool DebugMode;
 
+        public static double drillMultiplier = 1;
 
         public static void ModLog(string text)
         {

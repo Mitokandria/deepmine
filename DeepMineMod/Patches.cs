@@ -10,6 +10,8 @@ using UnityEngine;
 
 using Assets.Scripts.Objects.Items;
 using Assets.Scripts.Objects;
+using Assets.Scripts.Objects.Entities;
+using Assets.Scripts.Util;
 
 namespace DeepMineMod
 {
@@ -17,7 +19,7 @@ namespace DeepMineMod
     /// <summary>
     /// Alter ore drop quantities based on their world position
     /// </summary>
-    [HarmonyPatch(typeof(Minables), MethodType.Constructor, new Type[] { typeof(Minables), typeof(Vector3), typeof(Asteroid)})]
+    [HarmonyPatch(typeof(Minables), MethodType.Constructor, new Type[] { typeof(Minables), typeof(Vector3), typeof(Asteroid) })]
     public class Minables_Constructor
     {
         static void Postfix(Minables __instance, Minables masterInstance, Vector3 position, Asteroid parentAsteroid)
@@ -26,33 +28,33 @@ namespace DeepMineMod
 
             if (position.y > 40)
             {
-                __instance.MinDropQuantity = DeepMinePlugin.OreMinDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 2 - 1);
-                __instance.MaxDropQuantity = DeepMinePlugin.OreMaxDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 2 - 1);
+                __instance.MinDropQuantity = (int)Math.Ceiling((DeepMinePlugin.OreMinDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 2 - 1)) * DeepMinePlugin.drillMultiplier);
+                __instance.MaxDropQuantity = (int)Math.Ceiling((DeepMinePlugin.OreMaxDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 2 - 1)) * DeepMinePlugin.drillMultiplier);
             }
             else if (position.y > -10)
             {
-                __instance.MinDropQuantity = DeepMinePlugin.OreMinDropQuantity;
-                __instance.MaxDropQuantity = DeepMinePlugin.OreMaxDropQuantity;
+                __instance.MinDropQuantity = (int)Math.Ceiling(DeepMinePlugin.OreMinDropQuantity * DeepMinePlugin.drillMultiplier);
+                __instance.MaxDropQuantity = (int)Math.Ceiling(DeepMinePlugin.OreMaxDropQuantity * DeepMinePlugin.drillMultiplier);
             }
-            else if(position.y > (1 * commonDifference))
+            else if (position.y > (1 * commonDifference))
             {
-                __instance.MinDropQuantity = DeepMinePlugin.OreMinDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 2 - 1);
-                __instance.MaxDropQuantity = DeepMinePlugin.OreMaxDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 2 - 1);
+                __instance.MinDropQuantity = (int)Math.Ceiling((DeepMinePlugin.OreMinDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 2 - 1)) * DeepMinePlugin.drillMultiplier);
+                __instance.MaxDropQuantity = (int)Math.Ceiling((DeepMinePlugin.OreMaxDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 2 - 1)) * DeepMinePlugin.drillMultiplier);
             }
             else if (position.y > (2 * commonDifference))
             {
-                __instance.MinDropQuantity = DeepMinePlugin.OreMinDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 3 - 1);
-                __instance.MaxDropQuantity = DeepMinePlugin.OreMaxDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 3 - 1);
+                __instance.MinDropQuantity = (int)Math.Ceiling((DeepMinePlugin.OreMinDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 3 - 1)) * DeepMinePlugin.drillMultiplier);
+                __instance.MaxDropQuantity = (int)Math.Ceiling((DeepMinePlugin.OreMaxDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 3 - 1)) * DeepMinePlugin.drillMultiplier);
             }
             else if (position.y > (3 * commonDifference))
             {
-                __instance.MinDropQuantity = DeepMinePlugin.OreMinDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 4 - 1);
-                __instance.MaxDropQuantity = DeepMinePlugin.OreMaxDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 4 - 1);
+                __instance.MinDropQuantity = (int)Math.Ceiling((DeepMinePlugin.OreMinDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 4 - 1)) * DeepMinePlugin.drillMultiplier);
+                __instance.MaxDropQuantity = (int)Math.Ceiling((DeepMinePlugin.OreMaxDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 4 - 1)) * DeepMinePlugin.drillMultiplier);
             }
             else
             {
-                __instance.MinDropQuantity = DeepMinePlugin.OreMinDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 5 - 1);
-                __instance.MaxDropQuantity = DeepMinePlugin.OreMaxDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 5 - 1);
+                __instance.MinDropQuantity = (int)Math.Ceiling((DeepMinePlugin.OreMinDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 5 - 1)) * DeepMinePlugin.drillMultiplier);
+                __instance.MaxDropQuantity = (int)Math.Ceiling((DeepMinePlugin.OreMaxDropQuantity * (int)Math.Pow(DeepMinePlugin.LevelMultiplier, 5 - 1)) * DeepMinePlugin.drillMultiplier);
             }
 
             if (DeepMinePlugin.DebugMode)
@@ -65,7 +67,7 @@ namespace DeepMineMod
     }
 
     /// <summary>
-    /// Alter ore minin drill speed based on altitude
+    /// Alter ore minin drill speed based on altitude and drill being used and amount also based on the drill being used
     /// </summary>
     [HarmonyPatch(typeof(MiningDrill), "OnUsePrimary")]
     public class MiningDrill_OnUsePrimary
@@ -74,35 +76,59 @@ namespace DeepMineMod
         {
             int commonDifference = (int)DeepMinePlugin.BedrockDepth / (5 - 1);
 
-            if (targetLocation.y > 40)
-            {
-                __instance.MineCompletionTime = 0.15f;
+            ///Mining Drill         "ItemMiningDrill"
+            ///Mining Drill Heavy   "ItemMiningDrillHeavy"
+            ///Mining Drill MKII    "ItemMKIIMiningDrill"
+            double mkFactor;
+            if (__instance.GetThing.name == "ItemMiningDrillHeavy") {
+                mkFactor = 1;
+                __instance.MineAmount = DeepMinePlugin.MineAmount * 2;
+                DeepMinePlugin.drillMultiplier = 1.2;
             }
-            else if (targetLocation.y > -10)
-            {
-                __instance.MineCompletionTime = 0.12f;
-            }
-            else if (targetLocation.y > (1 * commonDifference))
-            {
-                __instance.MineCompletionTime = 0.18f;
-            }
-            else if (targetLocation.y > (2 * commonDifference))
-            {
-                __instance.MineCompletionTime = 0.22f;
-            }
-            else if (targetLocation.y > (3 * commonDifference))
-            {
-                __instance.MineCompletionTime = 0.28f;
+            else if (__instance.GetThing.name == "ItemMKIIMiningDrill") {
+                mkFactor = 1.5;
+                __instance.MineAmount = DeepMinePlugin.MineAmount;
+                DeepMinePlugin.drillMultiplier = 1.45;
             }
             else
             {
-                __instance.MineCompletionTime = 0.35f;
+                mkFactor = 0.9;
+                __instance.MineAmount = DeepMinePlugin.MineAmount;
+                DeepMinePlugin.drillMultiplier = 1;
+            }
+
+            if (targetLocation.y > 40)
+            {
+                __instance.MineCompletionTime = (float)0.15;
+            }
+            else if (targetLocation.y > -10)
+            {
+                __instance.MineCompletionTime = (float)0.12;
+            }
+            else if (targetLocation.y > (1 * commonDifference))
+            {
+                __instance.MineCompletionTime = (float)(0.18 / mkFactor);
+            }
+            else if (targetLocation.y > (2 * commonDifference))
+            {
+                __instance.MineCompletionTime = (float)(0.24 / mkFactor);
+            }
+            else if (targetLocation.y > (3 * commonDifference))
+            {
+                __instance.MineCompletionTime = (float)(0.33 / mkFactor);
+            }
+            else
+            {
+                __instance.MineCompletionTime = (float)(0.49 / mkFactor);
             }
 
             if (DeepMinePlugin.DebugMode)
             {
-                DeepMinePlugin.ModLog("Y=" + targetLocation.y);
+                DeepMinePlugin.ModLog("Thing=" + __instance.GetThing.name);
+                DeepMinePlugin.ModLog("mkFactor=" + mkFactor);
                 DeepMinePlugin.ModLog("MCT=" + __instance.MineCompletionTime);
+                DeepMinePlugin.ModLog("mineAmount=" + __instance.MineAmount);
+                DeepMinePlugin.ModLog("Y=" + targetLocation.y);
             }
         }
     }
@@ -111,7 +137,7 @@ namespace DeepMineMod
     /// <summary>
     /// Placeholder for larger mining tools
     /// </summary>
-    [HarmonyPatch(typeof(CursorVoxel), MethodType.Constructor)]
+    /*[HarmonyPatch(typeof(CursorVoxel), MethodType.Constructor)]
     public class CursorVoxel_Constructor
     {
         static void Postfix(CursorVoxel __instance)
@@ -119,7 +145,7 @@ namespace DeepMineMod
             Type typeBoxCollider = __instance.GameObject.GetComponent("BoxCollider").GetType();
             PropertyInfo prop = typeBoxCollider.GetProperty("size");
         }
-    }
+    }*/
 
     /// <summary>
     /// Prevents lava bedrock texture from spawning, potentially has insidious effect but unclear from initial tests
@@ -175,19 +201,6 @@ namespace DeepMineMod
     }
 
     /// <summary>
-    /// Increasing drill radius
-    /// </summary>
-    [HarmonyPatch(typeof(MiningDrill), "Awake")]
-    public class MiningDrill_Awake
-    {
-        static void Prefix(MiningDrill __instance)
-        {
-            //__instance.MineCompletionTime = DeepMinePlugin.MineCompletionTime;
-            __instance.MineAmount = DeepMinePlugin.MineAmount;
-        }
-    }
-
-    /// <summary>
     /// Alter ore max stack size based on layer multiplier
     /// </summary>
     [HarmonyPatch(typeof(Prefab), "LoadCorePrefabs")]
@@ -199,8 +212,14 @@ namespace DeepMineMod
             if (roundedNumber < 50) { roundedNumber = 50; }
 
             foreach (var orePrefab in Ore.AllOrePrefabs)
-            {              
+            {
                 orePrefab.MaxQuantity = (int)roundedNumber;
+
+                if (DeepMinePlugin.DebugMode)
+                {
+                    DeepMinePlugin.ModLog("Ore=" + orePrefab.CustomName);
+                    DeepMinePlugin.ModLog("StackSize=" + orePrefab.MaxQuantity);
+                }
             }
         }
 
