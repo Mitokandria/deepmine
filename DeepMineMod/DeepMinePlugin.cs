@@ -1,10 +1,11 @@
 ﻿using BepInEx;
 using HarmonyLib;
 using BepInEx.Configuration;
+using UnityEngine;
 
 namespace DeepMineMod
 {
-    [BepInPlugin("DeepMineMod", "Deep Mine Mod", "0.3.0.0")]
+    [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     public class DeepMinePlugin : BaseUnityPlugin
     {
         private ConfigEntry<float> configBedrockDepth;
@@ -27,7 +28,7 @@ namespace DeepMineMod
 
         public static void ModLog(string text)
         {
-            UnityEngine.Debug.Log("[Deep Mine Mod]: " + text);
+            Debug.Log($"{PluginInfo.PLUGIN_NAME}: " + text);
         }
 
         // Awake is called once when both the game and the plug-in are loaded
@@ -35,11 +36,10 @@ namespace DeepMineMod
         {
             HandleConfig();
 
-            ModLog("Successfully loaded Deep Mine Mod");
-            ModLog("Attempting to patch");
-            var harmony = new Harmony("com.dl.deepmine");
+            Debug.Log($"Plugin {PluginInfo.PLUGIN_NAME} {PluginInfo.PLUGIN_VERSION} is loaded!");
+            var harmony = new Harmony($"{PluginInfo.PLUGIN_GUID}");
             harmony.PatchAll();
-            ModLog("Patched");
+            Debug.Log($"{PluginInfo.PLUGIN_NAME} Patching complete!");
         }
 
         void HandleConfig()

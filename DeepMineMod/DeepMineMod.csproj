@@ -32,7 +32,7 @@
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="xcopy /Y /F &quot;$(TargetPath)&quot; &quot;C:\Users\Rodrigo\OneDrive\Documentos\My Games\Stationeers\mods\DeepMineMod [StationeersMods]&quot;" />
-	<Exec Command="D:\Games\Libraries\Steam\steamapps\common\Stationeers\rocketstation.exe" />
+	<!--<Exec Command="D:\Games\Libraries\Steam\steamapps\common\Stationeers\rocketstation.exe" />-->
   </Target>
 
 </Project>
