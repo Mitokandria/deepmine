@@ -8,7 +8,7 @@ namespace DeepMineMod
     {
         public const string PLUGIN_GUID = "DeepMineMod";
         public const string PLUGIN_NAME = "Deep Mine Mod";
-        public const string PLUGIN_VERSION = "0.3.1";
+        public const string PLUGIN_VERSION = "0.3.2";
         public const uint PLUGIN_ID = 3119609839;
     }
 }

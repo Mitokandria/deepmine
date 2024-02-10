@@ -76,9 +76,11 @@ namespace DeepMineMod
         {
             int commonDifference = (int)DeepMinePlugin.BedrockDepth / (5 - 1);
 
-            ///Mining Drill         "ItemMiningDrill"
-            ///Mining Drill Heavy   "ItemMiningDrillHeavy"
-            ///Mining Drill MKII    "ItemMKIIMiningDrill"
+            ///Mining Drill             "ItemMiningDrill"
+            ///Mining Drill Heavy       "ItemMiningDrillHeavy"
+            ///Mining Drill MKII        "ItemMKIIMiningDrill"
+            ///Mining Drill Penumatic   "ItemMiningDrillPneumatic"
+
             double mkFactor;
             if (__instance.GetThing.name == "ItemMiningDrillHeavy") {
                 mkFactor = 1;
@@ -90,36 +92,45 @@ namespace DeepMineMod
                 __instance.MineAmount = (float)(DeepMinePlugin.MineAmount * 1.25);
                 DeepMinePlugin.drillMultiplier = 1.25;
             }
+            else if (__instance.GetThing.name == "ItemMiningDrillPneumatic")
+            {
+                mkFactor = 1;
+                __instance.MineAmount = (float)(DeepMinePlugin.MineAmount * 1.5);
+                DeepMinePlugin.drillMultiplier = 1.25;
+            }
             else
             {
-                mkFactor = 0.9;
+                mkFactor = 0.8;
                 __instance.MineAmount = DeepMinePlugin.MineAmount;
                 DeepMinePlugin.drillMultiplier = 1;
             }
 
-            if (targetLocation.y > 40)
+            if (__instance.GetThing.name != "ItemMiningDrillPneumatic")
             {
-                __instance.MineCompletionTime = (float)0.15;
-            }
-            else if (targetLocation.y > -10)
-            {
-                __instance.MineCompletionTime = (float)0.12;
-            }
-            else if (targetLocation.y > (1 * commonDifference))
-            {
-                __instance.MineCompletionTime = (float)(0.18 / mkFactor);
-            }
-            else if (targetLocation.y > (2 * commonDifference))
-            {
-                __instance.MineCompletionTime = (float)(0.24 / mkFactor);
-            }
-            else if (targetLocation.y > (3 * commonDifference))
-            {
-                __instance.MineCompletionTime = (float)(0.33 / mkFactor);
-            }
-            else
-            {
-                __instance.MineCompletionTime = (float)(0.49 / mkFactor);
+                if (targetLocation.y > 40)
+                {
+                    __instance.MineCompletionTime = (float)0.15;
+                }
+                else if (targetLocation.y > -10)
+                {
+                    __instance.MineCompletionTime = (float)0.12;
+                }
+                else if (targetLocation.y > (1 * commonDifference))
+                {
+                    __instance.MineCompletionTime = (float)(0.18 / mkFactor);
+                }
+                else if (targetLocation.y > (2 * commonDifference))
+                {
+                    __instance.MineCompletionTime = (float)(0.24 / mkFactor);
+                }
+                else if (targetLocation.y > (3 * commonDifference))
+                {
+                    __instance.MineCompletionTime = (float)(0.33 / mkFactor);
+                }
+                else
+                {
+                    __instance.MineCompletionTime = (float)(0.49 / mkFactor);
+                }
             }
 
             if (DeepMinePlugin.DebugMode)
