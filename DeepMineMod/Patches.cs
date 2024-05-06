@@ -199,6 +199,7 @@ namespace DeepMineMod
         }
     }
 
+    /*
     /// <summary>
     /// Alter GPR Range
     /// </summary>
@@ -210,6 +211,7 @@ namespace DeepMineMod
             __instance.Resolution = (int)Math.Floor(Math.Abs(DeepMinePlugin.BedrockDepth) * 0.4);
         }
     }
+    */
 
     /// <summary>
     /// Alter ore max stack size based on layer multiplier
