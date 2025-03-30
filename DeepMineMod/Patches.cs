@@ -183,7 +183,7 @@ namespace DeepMineMod
         static void Prefix(TerrainGeneration __instance)
         {
             WorldManager.BedrockLevel = DeepMinePlugin.BedrockDepth;
-            WorldManager.LavaLevel = DeepMinePlugin.BedrockDepth;
+            //WorldManager.LavaLevel = DeepMinePlugin.BedrockDepth;
         }
     }
 
